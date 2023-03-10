@@ -47,3 +47,12 @@ from sklearn.preprocessing import LabelEncoder
 le = LabelEncoder()
 y = le.fit_transform(y)
 print(y)
+
+# split the dataset for training and testing
+from sklearn.model_selection import train_test_split
+x_train, x_test, y_train, y_test = train_test_split(x,y,test_size = 0.25, random_state=1)
+print(x_train)
+print(x_test)
+print(y_train)
+print(y_test)
+
