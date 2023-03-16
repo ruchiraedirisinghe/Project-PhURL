@@ -56,3 +56,11 @@ print(x_test)
 print(y_train)
 print(y_test)
 
+# Feature Scaling - Normalization & Standardization
+from sklearn.preprocessing import StandardScaler
+
+scaler = StandardScaler()
+x_train[:,120:] = scaler.fit_transform(x_train[:,120:])
+x_test[:,120:] = scaler.fit_transform(x_train[:,120:])
+print(x_train)
+print(x_test)
