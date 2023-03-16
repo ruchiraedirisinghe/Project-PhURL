@@ -36,48 +36,134 @@ df.type.value_counts()
 
 
 ##############################################################################################################################################################
+
 # Plotting WordCloud
+
+############ METHOD 1
 
 #df_phish = df[df['type'] == 'Phishing']
 #df_malware = df[df['type'] == 'Malware']
 #df_deface = df[df['type'] == 'Defacement']
 #df_benign = df[df['type'] == 'Benign']
 
-#phish_url = " ".join(i for i in df_phish['url'])
-#malware_url = " ".join(i for i in df_malware['url'])
-#deface_url = " ".join(i for i in df_deface['url'])
-#benign_url = " ".join(i for i in df_benign['url'])
 
-#phish_wc = WordCloud(width=1600, height=800, colormap='Paired').generate(phish_url)
-#malware_wc = WordCloud(width=1600, height=800, colormap='Paired').generate(malware_url)
-#deface_wc = WordCloud(width=1600, height=800, colormap='Paired').generate(deface_url)
-#benign_wc = WordCloud(width=1600, height=800, colormap='Paired').generate(benign_url)
-
+#phish_url = " ".join(i for i in df_phish.url)
+#wordcloud = WordCloud(width=1600, height=800, colormap='Paired').generate(phish_url)
 #plt.figure( figsize=(12,14), facecolor='k')
 #plt.imshow(wordcloud, interpolation='bilinear')
 #plt.axis("off")
 #plt.tight_layout(pad=0)
 #plt.show()
 
+#malware_url = " ".join(i for i in df_malware.url)
+#wordcloud = WordCloud(width=1600, height=800, colormap='Paired').generate(malware_url)
+#plt.figure( figsize=(12,14), facecolor='k')
+#plt.imshow(wordcloud, interpolation='bilinear')
+#plt.axis("off")
+#plt.tight_layout(pad=0)
+#plt.show()
+
+#deface_url = " ".join(i for i in df_deface.url)
+#wordcloud = WordCloud(width=1600, height=800, colormap='Paired').generate(deface_url)
+#plt.figure( figsize=(12,14), facecolor='k')
+#plt.imshow(wordcloud, interpolation='bilinear')
+#plt.axis("off")
+#plt.tight_layout(pad=0)
+#plt.show()
+
+#benign_url = " ".join(i for i in df_benign.url)
+#wordcloud = WordCloud(width=1600, height=800, colormap='Paired').generate(benign_url)
+#plt.figure( figsize=(12,14), facecolor='k')
+#plt.imshow(wordcloud, interpolation='bilinear')
+#plt.axis("off")
+#plt.tight_layout(pad=0)
+#plt.show()
+
+print(df['url'].isnull().sum())
+
+
+############ METHOD 2
+
+#df_phish = df[df['type'] == 'Phishing']
+#df_malware = df[df['type'] == 'Malware']
+#df_deface = df[df['type'] == 'Defacement']
+#df_benign = df[df['type'] == 'Benign']
+
+#phish_url = " ".join(i for i in df_phish.url if isinstance(i, str))
+#phish_url = ''.join(e for e in phish_url if e.isalnum() or e.isspace())
+#phish_url = phish_url.lower()
+#wordcloud = WordCloud(width=1600, height=800, colormap='Paired').generate(phish_url)
+#plt.figure( figsize=(12,14), facecolor='k')
+#plt.imshow(wordcloud, interpolation='bilinear')
+#plt.axis("off")
+#plt.tight_layout(pad=0)
+#plt.show()
+
+#malware_url = " ".join(i for i in df_malware.url)
+#wordcloud = WordCloud(width=1600, height=800, colormap='Paired').generate(malware_url)
+#plt.figure( figsize=(12,14), facecolor='k')
+#plt.imshow(wordcloud, interpolation='bilinear')
+#plt.axis("off")
+#plt.tight_layout(pad=0)
+#plt.show()
+
+#deface_url = " ".join(i for i in df_deface.url)
+#wordcloud = WordCloud(width=1600, height=800, colormap='Paired').generate(deface_url)
+#plt.figure( figsize=(12,14), facecolor='k')
+#plt.imshow(wordcloud, interpolation='bilinear')
+#plt.axis("off")
+#plt.tight_layout(pad=0)
+#plt.show()
+
+#benign_url = " ".join(i for i in df_benign.url)
+#wordcloud = WordCloud(width=1600, height=800, colormap='Paired').generate(benign_url)
+#plt.figure( figsize=(12,14), facecolor='k')
+#plt.imshow(wordcloud, interpolation='bilinear')
+#plt.axis("off")
+#plt.tight_layout(pad=0)
+#plt.show()
+
+#if not df_phish.empty:
+#    phish_url = " ".join(i for i in df_phish.url)
+#    wordcloud = WordCloud(width=1600, height=800, colormap='Paired').generate(phish_url)
+#    plt.figure( figsize=(12,14), facecolor='k')
+#    plt.imshow(wordcloud, interpolation='bilinear')
+#    plt.axis("off")
+#    plt.tight_layout(pad=0)
+#    plt.show()
+
+
 ##############################################################################################################################################################
+
+
 
 
 # Feature Engineering
 
 import re
 
+# Check whether the URL has a IPV address or not 
+
 def having_ip_address(url):
     match = re.search(
+       
+        # IPv4
         '(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.'
-        '([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\/)|'  # IPv4
-        '((0x[0-9a-fA-F]{1,2})\\.(0x[0-9a-fA-F]{1,2})\\.(0x[0-9a-fA-F]{1,2})\\.(0x[0-9a-fA-F]{1,2})\\/)' # IPv4 in hexadecimal
-        '(?:[a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}', url)  # Ipv6
+        '([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\/)|'  
+        
+        # IPv4 in hexadecimal format
+        '((0x[0-9a-fA-F]{1,2})\\.(0x[0-9a-fA-F]{1,2})\\.(0x[0-9a-fA-F]{1,2})\\.(0x[0-9a-fA-F]{1,2})\\/)' 
+        
+        # Ipv6
+        '(?:[a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}', url)  
+    
+    # print match group or No matching pattern found by scanning them.
+    
     if match:
-        # print match.group()
         return 1
     else:
-        # print 'No matching pattern found'
         return 0
+    
 df['use_of_ip'] = df['url'].apply(lambda i: having_ip_address(i))
 
 from urllib.parse import urlparse
@@ -86,18 +172,20 @@ def abnormal_url(url):
     hostname = urlparse(url).hostname
     hostname = str(hostname)
     match = re.search(hostname, url)
+    
+    # print match group or No matching pattern found by scanning them.
+    
     if match:
-        # print match.group()
         return 1
     else:
-        # print 'No matching pattern found'
         return 0
-
 
 df['abnormal_url'] = df['url'].apply(lambda i: abnormal_url(i))
 
 
 
+
+# Scan whether the URL is a Google Link
 
 from googlesearch import search
 
@@ -106,17 +194,32 @@ def google_index(url):
     return 1 if site else 0
 df['google_index'] = df['url'].apply(lambda i: google_index(i))
 
+
+
+
+# Scan how many dots the URL contains
+
 def count_dot(url):
     count_dot = url.count('.')
     return count_dot
 
 df['count.'] = df['url'].apply(lambda i: count_dot(i))
 
+
+
+
+# Scan how many 'www's the URL contains
+
 def count_www(url):
     url.count('www')
     return url.count('www')
 
 df['count-www'] = df['url'].apply(lambda i: count_www(i))
+
+
+
+
+# Scan how many '@'s the URL contains
 
 def count_atrate(url):
      
@@ -125,11 +228,20 @@ def count_atrate(url):
 df['count@'] = df['url'].apply(lambda i: count_atrate(i))
 
 
+
+
+# Scan how many ' / 's the URL contains
+
 def no_of_dir(url):
     urldir = urlparse(url).path
     return urldir.count('/')
 
 df['count_dir'] = df['url'].apply(lambda i: no_of_dir(i))
+
+
+
+
+# Scan how many embeds the URL contains
 
 def no_of_embed(url):
     urldir = urlparse(url).path
@@ -137,6 +249,10 @@ def no_of_embed(url):
 
 df['count_embed_domian'] = df['url'].apply(lambda i: no_of_embed(i))
 
+
+
+
+# Scan whether a URL shortening method has been used
 
 def shortening_service(url):
     match = re.search('bit\.ly|goo\.gl|shorte\.st|go2l\.ink|x\.co|ow\.ly|t\.co|tinyurl|tr\.im|is\.gd|cli\.gs|'
@@ -155,6 +271,11 @@ def shortening_service(url):
     
 df['short_url'] = df['url'].apply(lambda i: shortening_service(i))
 
+
+
+
+# Scan the protocol the web URL is using
+
 def count_https(url):
     return url.count('https')
 
@@ -164,6 +285,11 @@ def count_http(url):
     return url.count('http')
 
 df['count-http'] = df['url'].apply(lambda i : count_http(i))
+
+
+
+
+# Scan is there are any spaces contained in the URL
 
 def count_per(url):
     return url.count('%')
@@ -185,17 +311,20 @@ def count_equal(url):
 
 df['count='] = df['url'].apply(lambda i: count_equal(i))
 
+
+
+
+# Scan the length of the URL
+
 def url_length(url):
     return len(str(url))
 
-
-
-
-#Length of URL
-
 df['url_length'] = df['url'].apply(lambda i: url_length(i))
 
-#Hostname Length
+
+
+
+# Scan the Hostname's length
 
 def hostname_length(url):
     return len(urlparse(url).netloc)
@@ -203,6 +332,11 @@ def hostname_length(url):
 df['hostname_length'] = df['url'].apply(lambda i: hostname_length(i))
 
 df.head()
+
+
+
+
+# Scan for suspicious words inside the URL
 
 def suspicious_words(url):
     match = re.search('PayPal|login|signin|bank|account|update|free|lucky|service|bonus|ebayisapi|webscr',
@@ -214,6 +348,10 @@ def suspicious_words(url):
 df['sus_url'] = df['url'].apply(lambda i: suspicious_words(i))
 
 
+
+
+# Scan the number of digits used
+
 def digit_count(url):
     digits = 0
     for i in url:
@@ -224,6 +362,10 @@ def digit_count(url):
 
 df['count-digits']= df['url'].apply(lambda i: digit_count(i))
 
+
+
+
+# Scan the number of letters used
 
 def letter_count(url):
     letters = 0
@@ -237,13 +379,14 @@ df['count-letters']= df['url'].apply(lambda i: letter_count(i))
 
 
 
-# pip install tld
-
 from urllib.parse import urlparse
 from tld import get_tld
 import os.path
 
-#First Directory Length
+
+
+
+#Scan the First Directory Length
 
 def fd_length(url):
     urlpath= urlparse(url).path
@@ -257,7 +400,8 @@ df['fd_length'] = df['url'].apply(lambda i: fd_length(i))
 
 
 
-#Length of Top Level Domain
+#Scan the Length of Top Level Domain
+
 df['tld'] = df['url'].apply(lambda i: get_tld(i,fail_silently=True))
 
 
@@ -268,6 +412,26 @@ def tld_length(tld):
         return -1
 
 df['tld_length'] = df['tld'].apply(lambda i: tld_length(i))
+
+
+
+
+df = df.drop("tld",1)
+df.columns
+df['type'].value_counts()
+
+
+
+
+##############################################################################################################################################################
+
+# Exploratory Data Analysis
+
+import seaborn as sns
+sns.set(style="darkgrid")
+ax = sns.countplot(y="type", data=df, hue="use_of_ip")
+
+##############################################################################################################################################################
 
 
 
