@@ -31,13 +31,41 @@ df=pd.read_csv('malicious_phish.csv')
 print(df.shape)
 df.head()
 
+df.type.value_counts()
 
+
+
+##############################################################################################################################################################
+# Plotting WordCloud
+
+#df_phish = df[df['type'] == 'Phishing']
+#df_malware = df[df['type'] == 'Malware']
+#df_deface = df[df['type'] == 'Defacement']
+#df_benign = df[df['type'] == 'Benign']
+
+#phish_url = " ".join(i for i in df_phish['url'])
+#malware_url = " ".join(i for i in df_malware['url'])
+#deface_url = " ".join(i for i in df_deface['url'])
+#benign_url = " ".join(i for i in df_benign['url'])
+
+#phish_wc = WordCloud(width=1600, height=800, colormap='Paired').generate(phish_url)
+#malware_wc = WordCloud(width=1600, height=800, colormap='Paired').generate(malware_url)
+#deface_wc = WordCloud(width=1600, height=800, colormap='Paired').generate(deface_url)
+#benign_wc = WordCloud(width=1600, height=800, colormap='Paired').generate(benign_url)
+
+#plt.figure( figsize=(12,14), facecolor='k')
+#plt.imshow(wordcloud, interpolation='bilinear')
+#plt.axis("off")
+#plt.tight_layout(pad=0)
+#plt.show()
+
+##############################################################################################################################################################
 
 
 # Feature Engineering
 
 import re
-#Use of IP or not in domain
+
 def having_ip_address(url):
     match = re.search(
         '(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.'
@@ -70,8 +98,6 @@ df['abnormal_url'] = df['url'].apply(lambda i: abnormal_url(i))
 
 
 
-
-#pip install googlesearch-python
 
 from googlesearch import search
 
@@ -218,6 +244,7 @@ from tld import get_tld
 import os.path
 
 #First Directory Length
+
 def fd_length(url):
     urlpath= urlparse(url).path
     try:
