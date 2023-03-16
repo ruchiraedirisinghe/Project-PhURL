@@ -142,7 +142,7 @@ print(df['url'].isnull().sum())
 
 import re
 
-# Check whether the URL has a IPV address or not 
+## Feature 1: Check whether the URL has a IPV address or not 
 
 def having_ip_address(url):
     match = re.search(
@@ -185,7 +185,7 @@ df['abnormal_url'] = df['url'].apply(lambda i: abnormal_url(i))
 
 
 
-# Scan whether the URL is a Google Link
+## Feature 2: Scan whether the URL is a Google Link
 
 from googlesearch import search
 
@@ -208,7 +208,7 @@ df['count.'] = df['url'].apply(lambda i: count_dot(i))
 
 
 
-# Scan how many 'www's the URL contains
+## Feature 3: Scan how many 'www's the URL contains
 
 def count_www(url):
     url.count('www')
@@ -219,7 +219,7 @@ df['count-www'] = df['url'].apply(lambda i: count_www(i))
 
 
 
-# Scan how many '@'s the URL contains
+## Feature 4: Scan how many '@'s the URL contains
 
 def count_atrate(url):
      
@@ -230,7 +230,7 @@ df['count@'] = df['url'].apply(lambda i: count_atrate(i))
 
 
 
-# Scan how many ' / 's the URL contains
+## Feature 5: Scan how many ' / 's the URL contains
 
 def no_of_dir(url):
     urldir = urlparse(url).path
@@ -241,7 +241,7 @@ df['count_dir'] = df['url'].apply(lambda i: no_of_dir(i))
 
 
 
-# Scan how many embeds the URL contains
+## Feature 6: Scan how many embeds the URL contains
 
 def no_of_embed(url):
     urldir = urlparse(url).path
@@ -252,7 +252,7 @@ df['count_embed_domian'] = df['url'].apply(lambda i: no_of_embed(i))
 
 
 
-# Scan whether a URL shortening method has been used
+## Feature 7: Scan whether a URL shortening method has been used
 
 def shortening_service(url):
     match = re.search('bit\.ly|goo\.gl|shorte\.st|go2l\.ink|x\.co|ow\.ly|t\.co|tinyurl|tr\.im|is\.gd|cli\.gs|'
@@ -274,7 +274,7 @@ df['short_url'] = df['url'].apply(lambda i: shortening_service(i))
 
 
 
-# Scan the protocol the web URL is using
+## Feature 8: Scan the protocol the web URL is using
 
 def count_https(url):
     return url.count('https')
@@ -289,7 +289,7 @@ df['count-http'] = df['url'].apply(lambda i : count_http(i))
 
 
 
-# Scan is there are any spaces contained in the URL
+## Feature 9: Scan is there are any spaces contained in the URL
 
 def count_per(url):
     return url.count('%')
@@ -314,7 +314,7 @@ df['count='] = df['url'].apply(lambda i: count_equal(i))
 
 
 
-# Scan the length of the URL
+## Feature 10: Scan the length of the URL
 
 def url_length(url):
     return len(str(url))
@@ -324,7 +324,7 @@ df['url_length'] = df['url'].apply(lambda i: url_length(i))
 
 
 
-# Scan the Hostname's length
+## Feature 11: Scan the Hostname's length
 
 def hostname_length(url):
     return len(urlparse(url).netloc)
@@ -336,7 +336,7 @@ df.head()
 
 
 
-# Scan for suspicious words inside the URL
+## Feature 12: Scan for suspicious words inside the URL
 
 def suspicious_words(url):
     match = re.search('PayPal|login|signin|bank|account|update|free|lucky|service|bonus|ebayisapi|webscr',
@@ -350,7 +350,7 @@ df['sus_url'] = df['url'].apply(lambda i: suspicious_words(i))
 
 
 
-# Scan the number of digits used
+## Feature 13: Scan the number of digits used
 
 def digit_count(url):
     digits = 0
@@ -365,7 +365,7 @@ df['count-digits']= df['url'].apply(lambda i: digit_count(i))
 
 
 
-# Scan the number of letters used
+## Feature 14: Scan the number of letters used
 
 def letter_count(url):
     letters = 0
@@ -377,16 +377,16 @@ def letter_count(url):
 df['count-letters']= df['url'].apply(lambda i: letter_count(i))
 
 
-
+################################################################################################################################################################
 
 from urllib.parse import urlparse
 from tld import get_tld
 import os.path
 
+################################################################################################################################################################
 
 
-
-#Scan the First Directory Length
+## Feature 15: Scan the First Directory Length
 
 def fd_length(url):
     urlpath= urlparse(url).path
@@ -400,7 +400,7 @@ df['fd_length'] = df['url'].apply(lambda i: fd_length(i))
 
 
 
-#Scan the Length of Top Level Domain
+## Feature 16: Scan the Length of Top Level Domain
 
 df['tld'] = df['url'].apply(lambda i: get_tld(i,fail_silently=True))
 
@@ -427,9 +427,77 @@ df['type'].value_counts()
 
 # Exploratory Data Analysis
 
+
+## Figure Generate 1:  Distribution of the use of IP
+
 import seaborn as sns
 sns.set(style="darkgrid")
 ax = sns.countplot(y="type", data=df, hue="use_of_ip")
+
+
+## Figure Generate 2: Distribution of Abnormal URL
+
+sns.set(style="darkgrid")
+ax = sns.countplot(y="type", data=df, hue="abnormal_url")
+
+
+## Figure Generate 3: Distribution of Google Index
+
+sns.set(style="darkgrid")
+ax = sns.countplot(y="type", data=df, hue="google_index")
+
+
+## Figure Generate 4: Distribution of Shortened URLs
+
+sns.set(style="darkgrid")
+ax = sns.countplot(y="type", data=df, hue="short_url")
+
+
+## Figure Generate 5: Distribution of Suspicious URLs
+
+sns.set(style="darkgrid")
+ax = sns.countplot(y="type", data=df, hue="sus_url")
+
+
+## Figure Generate 6: Distribution of count of [.] dot
+
+sns.set(style="darkgrid")
+ax = sns.catplot(x="type", y="count.", kind="box", data=df)
+
+
+## Figure Generate 7: Distribution of count of WWWs
+
+sns.set(style="darkgrid")
+ax = sns.catplot(x="type", y="count-www", kind="box", data=df)
+
+
+## Figure Generate 8: Distribution of the count of "@"s
+
+sns.set(style="darkgrid")
+ax = sns.catplot(x="type", y="count@", kind="box", data=df)
+
+
+## Figure Generate 9: Distribution of the count of "dir"s
+
+sns.set(style="darkgrid")
+ax = sns.catplot(x="type", y="count_dir", kind="box", data=df)
+
+## Figure Generate 10: Distribution of the host name length
+
+sns.set(style="darkgrid")
+ax = sns.catplot(x="type", y="hostname_length", kind="box", data=df)
+
+
+## Figure Generate 11: Distribution of the first directory length
+
+sns.set(style="darkgrid")
+ax = sns.catplot(x="type", y="fd_length", kind="box", data=df)
+
+
+## Figure Generate 9: Distribution of the top level domain length
+
+sns.set(style="darkgrid")
+ax = sns.catplot(x="type", y="tld_length", kind="box", data=df)
 
 ##############################################################################################################################################################
 
