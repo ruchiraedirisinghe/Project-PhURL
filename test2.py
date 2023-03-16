@@ -534,3 +534,9 @@ y = df['type_code']
 # Training & Test Split
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=0.2,shuffle=True, random_state=5)
+
+
+
+################################################################################################################################################################
+
+## Model Building
