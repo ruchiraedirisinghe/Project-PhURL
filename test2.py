@@ -427,10 +427,11 @@ df['type'].value_counts()
 
 # Exploratory Data Analysis
 
+import seaborn as sns
+
 
 ## Figure Generate 1:  Distribution of the use of IP
 
-import seaborn as sns
 sns.set(style="darkgrid")
 ax = sns.countplot(y="type", data=df, hue="use_of_ip")
 
@@ -494,7 +495,7 @@ sns.set(style="darkgrid")
 ax = sns.catplot(x="type", y="fd_length", kind="box", data=df)
 
 
-## Figure Generate 9: Distribution of the top level domain length
+## Figure Generate 12: Distribution of the top level domain length
 
 sns.set(style="darkgrid")
 ax = sns.catplot(x="type", y="tld_length", kind="box", data=df)
@@ -504,7 +505,7 @@ ax = sns.catplot(x="type", y="tld_length", kind="box", data=df)
 
 
 
-# Label Encording
+## Label Encording
 
 from sklearn.preprocessing import LabelEncoder
 
@@ -514,7 +515,7 @@ df["type_code"] = lb_make.fit_transform(df["type"])
 
 
 
-#Predictor Variables
+## Predictor Variables
 
 # filtering out google_index as it has only 1 value
 
@@ -524,7 +525,7 @@ X = df[['use_of_ip','abnormal_url', 'count.', 'count-www', 'count@',
        'hostname_length', 'sus_url', 'fd_length', 'tld_length', 'count-digits',
        'count-letters']]
 
-#Target Variable
+# Target Variable
 
 y = df['type_code']
 
@@ -539,4 +540,195 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=
 
 ################################################################################################################################################################
 
+
+
+
 ## Model Building
+
+# Random Forest Model - Base Model
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn import metrics
+rf = RandomForestClassifier(n_estimators=100,max_features='sqrt')
+rf.fit(X_train,y_train)
+y_pred_rf = rf.predict(X_test)
+print(classification_report(y_test,y_pred_rf,target_names=['benign', 'defacement','phishing','malware']))
+
+score = metrics.accuracy_score(y_test, y_pred_rf)
+print("accuracy:   %0.3f" % score)
+
+
+
+
+## Figure Generate 13: Confusion Matrix of Random Forest Model
+
+cm = confusion_matrix(y_test, y_pred_rf)
+cm_df = pd.DataFrame (cm,
+                      index = ['benign', 'defacement', 'phishing', 'malware'],
+                      columns = ['benign', 'defacement', 'phishing', 'malware'])
+plt.figure(figsize=(8,6))
+sns.heatmap(cm_df, annot=True, fmt=".1f")
+plt.title('Confusion Matrix')
+plt.ylabel('Actal Values')
+plt.xlabel('Predicted Values')
+plt.show()
+
+
+
+
+## Figure Generate 14: Feature importances of Random Forest Model
+
+feat_importances = pd.Series(rf.feature_importances_, index=X_train.columns)
+feat_importances.sort_values().plot(kind="barh",figsize=(10,6))
+
+
+
+
+# XGboost Classifier
+
+xgb_c = xgb.XGBClassifier(n_estimators= 100)
+xgb_c.fit(X_train,y_train)
+y_pred_x = xgb_c.predict(X_test)
+print(classification_report(y_test,y_pred_x,target_names=['benign', 'defacement','phishing','malware']))
+
+score = metrics.accuracy_score(y_test, y_pred_x)
+print("accuracy:   %0.3f" % score)
+
+
+
+
+## Figure Generate 15: Confusion Matrix of XGboost Classifier
+
+cm = confusion_matrix(y_test, y_pred_x)
+cm_df = pd.DataFrame (cm,
+                      index = ['benign', 'defacement', 'phishing', 'malware'],
+                      columns = ['benign', 'defacement', 'phishing', 'malware'])
+plt.figure(figsize=(8,6))
+sns.heatmap(cm_df, annot=True, fmt=".1f")
+plt.title('Confusion Matrix')
+plt.ylabel('Actal Values')
+plt.xlabel('Predicted Values')
+plt.show()
+
+
+
+
+## Figure Generate 16: Feature importances of XGboost Classifier
+
+feat_importances = pd.Series(xgb_c.feature_importances_, index=X_train.columns)
+feat_importances.sort_values().plot(kind="barh",figsize=(10,6))
+
+
+
+
+# Light GBM Classifier
+
+lgb = LGBMClassifier(objective='multiclass',boosting_type= 'gbdt',n_jobs = 5, 
+          silent = True, random_state=5)
+LGB_C = lgb.fit(X_train, y_train)
+
+
+y_pred_lgb = LGB_C.predict(X_test)
+print(classification_report(y_test,y_pred_lgb,target_names=['benign', 'defacement','phishing','malware']))
+
+score = metrics.accuracy_score(y_test, y_pred_lgb)
+print("accuracy:   %0.3f" % score)
+
+
+
+
+## Figure Generate 15: Confusion Matrix of Light GBM Classifier
+
+cm = confusion_matrix(y_test, y_pred_lgb)
+cm_df = pd.DataFrame (cm,
+                      index = ['benign', 'defacement', 'phishing', 'malware'],
+                      columns = ['benign', 'defacement', 'phishing', 'malware'])
+plt.figure(figsize=(8,6))
+sns.heatmap(cm_df, annot=True, fmt=".1f")
+plt.title('Confusion Matrix')
+plt.ylabel('Actal Values')
+plt.xlabel('Predicted Values')
+plt.show()
+
+
+
+
+## Figure Generate 16: Feature importances of Light GBM Classifier
+
+feat_importances = pd.Series(lgb.feature_importances_, index=X_train.columns)
+feat_importances.sort_values().plot(kind="barh",figsize=(10,6))
+
+
+
+
+## Prediction
+
+def main(url):
+    
+    status = []
+    
+    status.append(having_ip_address(url))
+    status.append(abnormal_url(url))
+    status.append(count_dot(url))
+    status.append(count_www(url))
+    status.append(count_atrate(url))
+    status.append(no_of_dir(url))
+    status.append(no_of_embed(url))
+    
+    status.append(shortening_service(url))
+    status.append(count_https(url))
+    status.append(count_http(url))
+    
+    status.append(count_per(url))
+    status.append(count_ques(url))
+    status.append(count_hyphen(url))
+    status.append(count_equal(url))
+    
+    status.append(url_length(url))
+    status.append(hostname_length(url))
+    status.append(suspicious_words(url))
+    status.append(digit_count(url))
+    status.append(letter_count(url))
+    status.append(fd_length(url))
+    tld = get_tld(url,fail_silently=True)
+      
+    status.append(tld_length(tld))
+    
+    return status
+
+
+
+
+# Predict Function
+
+def get_prediction_from_url(test_url):
+    features_test = main(test_url)
+    features_test = np.array(features_test).reshape((1, -1))
+   
+    pred = lgb.predict(features_test)
+    if int(pred[0]) == 0:
+        
+        res="SAFE" 
+        return res
+    elif int(pred[0]) == 1.0:
+        
+        res="DEFACEMENT"
+        return res
+    elif int(pred[0]) == 2.0:
+        res="PHISHING"
+        return res
+        
+    elif int(pred[0]) == 3.0:
+        
+        res="MALWARE"
+        return res
+
+
+
+
+# Predicting Sample Raw URLs
+
+urls = ['titaniumcorporate.co.za','towardsdatascience.com/random-forest-in-python-24d0893d51c0']
+
+for url in urls:
+     print(get_prediction_from_url(url))
