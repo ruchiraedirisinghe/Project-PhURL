@@ -26,17 +26,26 @@ y = dataset.iloc[:,1].values
 
 ## Label Encording
 
-
 from sklearn.preprocessing import LabelEncoder
 le = LabelEncoder()
 y = le.fit_transform(y)
 
 
-# Training & Test Split
+# Feature Scaling - Standardization
+from sklearn.preprocessing import StandardScaler
+scaler = StandardScaler()
+X = scaler.fit_transform(X)
 
-from sklearn.model_selection import train_test_split
-X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=0.2,shuffle=True, random_state=5)
 
+# Create a new DataFrame with preprocessed data
+preprocessed_df = pd.DataFrame(data=X, columns=dataset.columns[1:-1])
+
+# Add the classification column to the preprocessed DataFrame
+preprocessed_df['type'] = y
+
+# Save preprocessed dataset as CSV file
+preprocessed_df.to_csv('preprocessed_dataset.csv', index=False)
+print("Dataset Creation Successfully Completed!!!")
 
 
 
