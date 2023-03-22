@@ -35,19 +35,36 @@ urls_data.head()
 # Split ,Remove Repetitions and "Com"
 
 
+# make tokens after splitting by slash
+
 def makeTokens(f):
-    tkns_BySlash = str(f.encode('utf-8')).split('/')	# make tokens after splitting by slash
+    tkns_BySlash = str(f.encode('utf-8')).split('/')	
     total_Tokens = []
+    
+    
+    # make tokens after splitting by dash
+    
     for i in tkns_BySlash:
-        tokens = str(i).split('-')	# make tokens after splitting by dash
+        tokens = str(i).split('-')
         tkns_ByDot = []
+    
+    
+    # make tokens after splitting by dot
+    
         for j in range(0,len(tokens)):
-            temp_Tokens = str(tokens[j]).split('.')	# make tokens after splitting by dot
+            temp_Tokens = str(tokens[j]).split('.')	
             tkns_ByDot = tkns_ByDot + temp_Tokens
         total_Tokens = total_Tokens + tokens + tkns_ByDot
-    total_Tokens = list(set(total_Tokens))	#remove redundant tokens
+    
+    
+    #remove redundant tokens
+    total_Tokens = list(set(total_Tokens))	
+    
+    
+    #removing .com since it occurs a lot of times and it should not be included in our features
+    
     if 'com' in total_Tokens:
-        total_Tokens.remove('com')	#removing .com since it occurs a lot of times and it should not be included in our features
+        total_Tokens.remove('com')	
     return total_Tokens
 
 
