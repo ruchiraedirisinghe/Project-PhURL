@@ -17,11 +17,11 @@ import seaborn as sns
 dataset = pd.read_csv('../preprocessed_dataset.csv')
 print(dataset.describe())
 
-# remove first 2 columns
-X = dataset.iloc[:,2:].values
+# remove first column
+X = dataset.iloc[:,1:].values
 
-# assign to 2nd column
-y = dataset.iloc[:,1].values 
+# assign to 1st column
+y = dataset.iloc[:,0].values 
 
 # Encoding categorical variables
 from sklearn.preprocessing import LabelEncoder
@@ -45,44 +45,68 @@ y_pred_rf = rf.predict(X_test)
 # Model Evaluation
 trainAS = rf.score(X_train, y_train)
 val_accurcy = rf.score(X_test, y_test)
-val_loss = metrics.log_loss(y_test, y_pred_rf)
+val_loss = 1 - val_accurcy
 precision = metrics.precision_score(y_test, y_pred_rf, average='weighted')
 f1 = metrics.f1_score(y_test, y_pred_rf, average='weighted')
 r2 = metrics.r2_score(y_test, y_pred_rf)
 
 # Output
 print("\nAccuracy on the train dataset: %.4f%%" % (trainAS * 100))
-print("Validation Accuracy: %.4f%%" % (trainAS * 100))
-print("Validation Loss: %.4f%%" % (trainAS * 100))
-print("Precision: %.4f%%" % (trainAS * 100))
-print("F1 Score: %.4f%%" % (trainAS * 100))
-print("R2 Score: %.4f%%" % (trainAS * 100))
+print("Validation Accuracy: %.4f%%" % (val_accurcy * 100))
+print("Validation Loss: %.4f%%" % (val_loss * 100))
+print("Precision: %.4f%%" % (precision * 100))
+print("F1 Score: %.4f%%" % (f1 * 100))
+print("R2 Score: %.4f%%" % (r2 * 100))
 
 
 
+# Confusion Matrix
+conf_matrix = confusion_matrix(y_test, y_pred_rf)
+conf_matrix_normlized = np.around(conf_matrix.astype('float') / conf_matrix.sum(axis=1)[:, np.newaxis], decimals=2)
 
-
-
-
-## Figure Generate 13: Confusion Matrix of Random Forest Model
-
-cm = confusion_matrix(y_test, y_pred_rf)
-cm_df = pd.DataFrame (cm,
-                      index = ['benign', 'defacement', 'phishing', 'malware'],
-                      columns = ['benign', 'defacement', 'phishing', 'malware'])
-plt.figure(figsize=(8,6))
-sns.heatmap(cm_df, annot=True, fmt=".1f")
+plt.figure(figsize=(8, 6))
+sns.heatmap(conf_matrix_normlized, annot=True, cmap='Blues')
 plt.title('Confusion Matrix')
-plt.ylabel('Actal Values')
-plt.xlabel('Predicted Values')
+plt.ylabel('Actual')
+plt.xlabel('Predicted')
+plt.show()
+
+# ROC Curve
+y_pred_proba = rf.predict_proba(X_test)
+fpr = dict()
+tpr = dict()
+roc_auc = dict()
+for i in range(len(le.classes_)):
+    fpr[i], tpr[i], _ = metrics.roc_curve(y_test, y_pred_proba[:, i], pos_label=i)
+    roc_auc[i] = metrics.auc(fpr[i], tpr[i])
+
+plt.figure(figsize=(8, 6))
+plt.plot(fpr[0], tpr[0], label='Class 0 ROC curve (area = %0.2f)' % roc_auc[0])
+plt.plot(fpr[1], tpr[1], label='Class 1 ROC curve (area = %0.2f)' % roc_auc[1])
+plt.plot(fpr[2], tpr[2], label='Class 2 ROC curve (area = %0.2f)' % roc_auc[2])
+plt.plot([0, 1], [0, 1], 'k--')
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('Receiver Operating Characteristic (ROC) Curve')
+plt.legend(loc="lower right")
+plt.show()
+
+# Generate Feature Importance Plot
+feat_importances = pd.Series(rf.feature_importances_, index=dataset.columns[1:])
+feat_importances.nlargest(10).plot(kind='barh')
+plt.title('Top 10 Important Features')
+plt.xlabel('Relative Importance')
+plt.ylabel('Features')
 plt.show()
 
 
+# Calculate TP, TN, FP, FN
+TP = round(conf_matrix_normlized[1, 1]*100, 4)
+TN = round(conf_matrix_normlized[0, 0]*100, 4)
+FP = round(conf_matrix_normlized[0, 1]*100, 4)
+FN = round(conf_matrix_normlized[1, 0]*100, 4)
 
-
-## Figure Generate 14: Feature importances of Random Forest Model
-
-feat_importances = pd.Series(rf.feature_importances_, index=X_train.columns)
-feat_importances.sort_values().plot(kind="barh",figsize=(10,6))
-
-
+print("\nTrue Positives (TP):", TP)
+print("True Negatives (TN):", TN)
+print("False Positives (FP):", FP)
+print("False Negatives (FN):", FN)
