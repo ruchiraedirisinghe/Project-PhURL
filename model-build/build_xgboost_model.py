@@ -91,7 +91,7 @@ plt.show()
 # Model Evaluation
 trainAS = xgb_c.score(X_train, y_train)
 val_accurcy = xgb_c.score(X_test, y_test)
-# val_loss = metrics.log_loss(y_test, y_pred_x)
+val_loss = 1 - val_accurcy
 precision = metrics.precision_score(y_test, y_pred_x, average='weighted')
 f1 = metrics.f1_score(y_test, y_pred_x, average='weighted')
 r2 = metrics.r2_score(y_test, y_pred_x)
@@ -99,7 +99,7 @@ r2 = metrics.r2_score(y_test, y_pred_x)
 # Output
 print("\nAccuracy on the train dataset: %.4f%%" % (trainAS * 100))
 print("Validation Accuracy: %.4f%%" % (val_accurcy * 100))
-# print("Validation Loss: %.4f%%" % (val_loss * 100))
+print("Validation Loss: %.4f%%" % (val_loss * 100))
 print("Precision: %.4f%%" % (precision * 100))
 print("F1 Score: %.4f%%" % (f1 * 100))
 print("R2 Score: %.4f%%" % (r2 * 100))
