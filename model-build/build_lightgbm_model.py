@@ -16,6 +16,7 @@ from sklearn.metrics import classification_report
 from lightgbm import LGBMClassifier
 import matplotlib.pyplot as plt
 import seaborn as sns
+# import joblib
 
 # Load dataset
 dataset = pd.read_csv('../preprocessed_dataset.csv')
@@ -113,3 +114,7 @@ print("\nTrue Positives (TP):", TP)
 print("True Negatives (TN):", TN)
 print("False Positives (FP):", FP)
 print("False Negatives (FN):", FN)
+
+
+# # Save the model as a joblib file
+# joblib.dump(LGB_C, 'lgb_model.joblib')
