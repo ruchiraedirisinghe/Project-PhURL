@@ -3,61 +3,131 @@
 #### PhURL - Web Based Phishing URL Detection & Learning Platform ####
 #### Created By - Ruchira Edirisinghe ####
 #### Plymouth Final Year Project - 2023 ####
-#### Final Build - File 1 ####
+#### Test File 4 ####
 
 '''
 
-import numpy as np
-import pandas as pd
+
+# # Feature Engineering
+
+# import re
+
+# ## Feature 1: Check whether the URL has a IPV address or not 
+
+# def having_ip_address(url):
+#     match = re.search(
+       
+#         '(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.'
+#         '([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\/)|'  
+        
+#         '((0x[0-9a-fA-F]{1,2})\\.(0x[0-9a-fA-F]{1,2})\\.(0x[0-9a-fA-F]{1,2})\\.(0x[0-9a-fA-F]{1,2})\\/)' 
+
+#         '(?:[a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}', url)  
+    
+#     if match:
+#         return 1
+#     else:
+#         return 0
+    
+# df['use_of_ip'] = df['url'].apply(lambda i: having_ip_address(i))
+
+# from urllib.parse import urlparse
+
+# def abnormal_url(url):
+#     hostname = urlparse(url).hostname
+#     hostname = str(hostname)
+#     match = re.search(hostname, url)
+    
+#     if match:
+#         return 1
+#     else:
+#         return 0
+
+# df['abnormal_url'] = df['url'].apply(lambda i: abnormal_url(i))
+
+# ## Feature 2: Scan whether the URL is a Google Link
+
+# from googlesearch import search
+
+# def google_index(url):
+#     site = search(url, 5)
+#     return 1 if site else 0
+# df['google_index'] = df['url'].apply(lambda i: google_index(i))
+
+# def count_dot(url):
+#     count_dot = url.count('.')
+#     return count_dot
+
+# df['count.'] = df['url'].apply(lambda i: count_dot(i))
+
+# ## Feature 3: Scan how many 'www's the URL contains
+
+# def count_www(url):
+#     url.count('www')
+#     return url.count('www')
+
+# df['count-www'] = df['url'].apply(lambda i: count_www(i))
+
+# ## Feature 4: Scan how many '@'s the URL contains
+
+# def count_atrate(url):
+     
+#     return url.count('@')
+
+# df['count@'] = df['url'].apply(lambda i: count_atrate(i))
+
+# ## Feature 5: Scan how many ' / 's the URL contains
+
+# def no_of_dir(url):
+#     urldir = urlparse(url).path
+#     return urldir.count('/')
+
+# df['count_dir'] = df['url'].apply(lambda i: no_of_dir(i))
+
+
+
+
+
+
+# Feature Engineering
+
 import re
-from sklearn.preprocessing import StandardScaler
-import joblib
-from urllib.parse import urlparse
-from tld import get_tld
-from urllib.parse import urlparse
-from tld import get_tld
-import os.path
-from urllib.parse import urlparse
-
-# Load model
-model = joblib.load('lgb_model.joblib')
-
-
-# Define feature extraction functions
 
 ## Feature 1: Check whether the URL has a IPV address or not 
 
 def having_ip_address(url):
     match = re.search(
        
-        # IPv4
         '(([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\.'
         '([01]?\\d\\d?|2[0-4]\\d|25[0-5])\\/)|'  
         
-        # IPv4 in hexadecimal format
         '((0x[0-9a-fA-F]{1,2})\\.(0x[0-9a-fA-F]{1,2})\\.(0x[0-9a-fA-F]{1,2})\\.(0x[0-9a-fA-F]{1,2})\\/)' 
         
-        # Ipv6
         '(?:[a-fA-F0-9]{1,4}:){7}[a-fA-F0-9]{1,4}', url)  
-    
-    # print match group or No matching pattern found by scanning them.
     
     if match:
         return 1
     else:
         return 0
+    
+df['use_of_ip'] = df['url'].apply(lambda i: having_ip_address(i))
+
+from urllib.parse import urlparse
 
 def abnormal_url(url):
     hostname = urlparse(url).hostname
     hostname = str(hostname)
     match = re.search(hostname, url)
     
-    # print match group or No matching pattern found by scanning them.
-    
     if match:
         return 1
     else:
         return 0
+
+df['abnormal_url'] = df['url'].apply(lambda i: abnormal_url(i))
+
+
+
 
 ## Feature 2: Scan whether the URL is a Google Link
 
@@ -66,6 +136,9 @@ from googlesearch import search
 def google_index(url):
     site = search(url, 5)
     return 1 if site else 0
+df['google_index'] = df['url'].apply(lambda i: google_index(i))
+
+
 
 
 # Scan how many dots the URL contains
@@ -74,12 +147,19 @@ def count_dot(url):
     count_dot = url.count('.')
     return count_dot
 
+df['count.'] = df['url'].apply(lambda i: count_dot(i))
+
+
+
 
 ## Feature 3: Scan how many 'www's the URL contains
 
 def count_www(url):
     url.count('www')
     return url.count('www')
+
+df['count-www'] = df['url'].apply(lambda i: count_www(i))
+
 
 
 
@@ -89,6 +169,9 @@ def count_atrate(url):
      
     return url.count('@')
 
+df['count@'] = df['url'].apply(lambda i: count_atrate(i))
+
+
 
 
 ## Feature 5: Scan how many ' / 's the URL contains
@@ -97,12 +180,19 @@ def no_of_dir(url):
     urldir = urlparse(url).path
     return urldir.count('/')
 
+df['count_dir'] = df['url'].apply(lambda i: no_of_dir(i))
+
+
+
 
 ## Feature 6: Scan how many embeds the URL contains
 
 def no_of_embed(url):
     urldir = urlparse(url).path
     return urldir.count('//')
+
+df['count_embed_domian'] = df['url'].apply(lambda i: no_of_embed(i))
+
 
 
 
@@ -123,15 +213,23 @@ def shortening_service(url):
     else:
         return 0
     
-    
+df['short_url'] = df['url'].apply(lambda i: shortening_service(i))
+
+
+
 
 ## Feature 8: Scan the protocol the web URL is using
 
 def count_https(url):
     return url.count('https')
 
+df['count-https'] = df['url'].apply(lambda i : count_https(i))
+
 def count_http(url):
     return url.count('http')
+
+df['count-http'] = df['url'].apply(lambda i : count_http(i))
+
 
 
 
@@ -140,17 +238,22 @@ def count_http(url):
 def count_per(url):
     return url.count('%')
 
+df['count%'] = df['url'].apply(lambda i : count_per(i))
 
 def count_ques(url):
     return url.count('?')
 
+df['count?'] = df['url'].apply(lambda i: count_ques(i))
 
 def count_hyphen(url):
     return url.count('-')
 
+df['count-'] = df['url'].apply(lambda i: count_hyphen(i))
 
 def count_equal(url):
     return url.count('=')
+
+df['count='] = df['url'].apply(lambda i: count_equal(i))
 
 
 
@@ -160,12 +263,20 @@ def count_equal(url):
 def url_length(url):
     return len(str(url))
 
+df['url_length'] = df['url'].apply(lambda i: url_length(i))
+
+
 
 
 ## Feature 11: Scan the Hostname's length
 
 def hostname_length(url):
     return len(urlparse(url).netloc)
+
+df['hostname_length'] = df['url'].apply(lambda i: hostname_length(i))
+
+df.head()
+
 
 
 
@@ -178,8 +289,10 @@ def suspicious_words(url):
         return 1
     else:
         return 0
-    
-    
+df['sus_url'] = df['url'].apply(lambda i: suspicious_words(i))
+
+
+
 
 ## Feature 13: Scan the number of digits used
 
@@ -189,6 +302,10 @@ def digit_count(url):
         if i.isnumeric():
             digits = digits + 1
     return digits
+
+
+df['count-digits']= df['url'].apply(lambda i: digit_count(i))
+
 
 
 
@@ -201,6 +318,16 @@ def letter_count(url):
             letters = letters + 1
     return letters
 
+df['count-letters']= df['url'].apply(lambda i: letter_count(i))
+
+
+################################################################################################################################################################
+
+from urllib.parse import urlparse
+from tld import get_tld
+import os.path
+
+################################################################################################################################################################
 
 
 ## Feature 15: Scan the First Directory Length
@@ -211,10 +338,16 @@ def fd_length(url):
         return len(urlpath.split('/')[1])
     except:
         return 0
-    
-    
+
+df['fd_length'] = df['url'].apply(lambda i: fd_length(i))
+
+
+
 
 ## Feature 16: Scan the Length of Top Level Domain
+
+df['tld'] = df['url'].apply(lambda i: get_tld(i,fail_silently=True))
+
 
 def tld_length(tld):
     try:
@@ -222,77 +355,11 @@ def tld_length(tld):
     except:
         return -1
 
-
-
-
-## Prediction
-
-def main(url):
-    
-    status = []
-    
-    status.append(having_ip_address(url))
-    status.append(abnormal_url(url))
-    status.append(count_dot(url))
-    status.append(count_www(url))
-    status.append(count_atrate(url))
-    status.append(no_of_dir(url))
-    status.append(no_of_embed(url))
-    
-    status.append(shortening_service(url))
-    status.append(count_https(url))
-    status.append(count_http(url))
-    
-    status.append(count_per(url))
-    status.append(count_ques(url))
-    status.append(count_hyphen(url))
-    status.append(count_equal(url))
-    
-    status.append(url_length(url))
-    status.append(hostname_length(url))
-    status.append(suspicious_words(url))
-    status.append(digit_count(url))
-    status.append(letter_count(url))
-    status.append(fd_length(url))
-    tld = get_tld(url,fail_silently=True)
-      
-    status.append(tld_length(tld))
-    
-    return status
+df['tld_length'] = df['tld'].apply(lambda i: tld_length(i))
 
 
 
 
-# Predict Function
-
-def get_prediction_from_url(test_url):
-    features_test = main(test_url)
-    features_test = np.array(features_test).reshape((1, -1))
-   
-   # Predict result
-    pred = model.predict(features_test) #unindent does not match any outer identation level (pyflakes E)
-
-    if int(pred[0]) == 0:
-        
-        res="SAFE" 
-        return res
-    elif int(pred[0]) == 1.0:
-        
-        res="DEFACEMENT"
-        return res
-    elif int(pred[0]) == 2.0:
-        res="PHISHING"
-        return res
-        
-    elif int(pred[0]) == 3.0:
-        
-        res="MALWARE"
-        return res
-
-
-
-
-# Take user input and make prediction
-url = input("Enter URL: ")
-result = get_prediction_from_url(url)
-print("Result:", result)
+df = df.drop("tld",1)
+df.columns
+df['type'].value_counts()
