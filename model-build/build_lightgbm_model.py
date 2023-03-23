@@ -16,6 +16,7 @@ from sklearn.metrics import classification_report
 from lightgbm import LGBMClassifier
 import matplotlib.pyplot as plt
 import seaborn as sns
+
 # import joblib
 
 # Load dataset
@@ -27,6 +28,8 @@ X = dataset.iloc[:,1:].values
 
 # assign to 1st column
 y = dataset.iloc[:,0].values 
+
+num_features = X.shape[1]
 
 # Encoding categorical variables
 from sklearn.preprocessing import LabelEncoder
@@ -40,7 +43,7 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, test_size=
 num_classes = len(le.classes_)
 
 lgb = LGBMClassifier(objective='multiclass', boosting_type='gbdt', n_jobs=5, 
-                     silent=True, random_state=5, num_class=num_classes)
+                     silent=True, random_state=5, num_class=num_classes, num_leaves=num_features)
 LGB_C = lgb.fit(X_train, y_train)
 
 y_pred_lgb = LGB_C.predict(X_test)
@@ -76,31 +79,31 @@ plt.ylabel('True Label')
 plt.title('Confusion Matrix')
 plt.show()
 
-# Plotting ROC Curve
-y_pred_proba_lgb = LGB_C.predict_proba(X_test)
-fpr, tpr, thresholds = metrics.roc_curve(y_test, y_pred_proba_lgb[:,1], pos_label=1)
-roc_auc = metrics.auc(fpr, tpr)
-plt.figure(figsize=(8,6))
-plt.plot(fpr, tpr, color='blue', lw=2, label='ROC Curve (area = %0.2f)' % roc_auc)
-plt.plot([0, 1], [0, 1], color='red', lw=2, linestyle='--', label='Random Guess')
-plt.xlim([0.0, 1.0])
-plt.ylim([0.0, 1.05])
-plt.xlabel('False Positive Rate')
-plt.ylabel('True Positive Rate')
-plt.title('Receiver Operating Characteristic (ROC) Curve')
-plt.legend(loc="lower right")
-plt.show()
+# # Plotting ROC Curve
+# y_pred_proba_lgb = LGB_C.predict_proba(X_test)
+# fpr, tpr, thresholds = metrics.roc_curve(y_test, y_pred_proba_lgb[:,1], pos_label=1)
+# roc_auc = metrics.auc(fpr, tpr)
+# plt.figure(figsize=(8,6))
+# plt.plot(fpr, tpr, color='blue', lw=2, label='ROC Curve (area = %0.2f)' % roc_auc)
+# plt.plot([0, 1], [0, 1], color='red', lw=2, linestyle='--', label='Random Guess')
+# plt.xlim([0.0, 1.0])
+# plt.ylim([0.0, 1.05])
+# plt.xlabel('False Positive Rate')
+# plt.ylabel('True Positive Rate')
+# plt.title('Receiver Operating Characteristic (ROC) Curve')
+# plt.legend(loc="lower right")
+# plt.show()
 
-import lightgbm as lgb
-import matplotlib.pyplot as plt
+# import lightgbm as lgb
+# import matplotlib.pyplot as plt
 
-# Train the LGBMClassifier model
-LGB_C = lgb.LGBMClassifier(n_estimators=100, learning_rate=0.05, num_leaves=31)
-LGB_C.fit(X_train, y_train)
+# # Train the LGBMClassifier model
+# LGB_C = lgb.LGBMClassifier(n_estimators=100, learning_rate=0.05, num_leaves=31)
+# LGB_C.fit(X_train, y_train)
 
-# Plot feature importance
-lgb.plot_importance(LGB_C, max_num_features=20, height=0.8)
-plt.show()
+# # Plot feature importance
+# lgb.plot_importance(LGB_C, max_num_features=21, height=0.8)
+# plt.show()
 
 
 # Calculate TP, TN, FP, FN

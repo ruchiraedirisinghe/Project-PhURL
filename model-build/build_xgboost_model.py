@@ -26,6 +26,7 @@ X = dataset.iloc[:,1:].values
 # assign to 1st column
 y = dataset.iloc[:,0].values 
 
+
 # Encoding categorical variables
 from sklearn.preprocessing import LabelEncoder
 le = LabelEncoder()
